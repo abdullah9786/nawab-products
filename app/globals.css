@@ -1,0 +1,323 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Colors */
+    --color-parchment: 251 248 243;
+    --color-ivory: 246 242 236;
+    --color-gold: 199 163 109;
+    --color-gold-light: 227 184 115;
+    --color-gold-dark: 156 107 78;
+    --color-clay: 156 107 78;
+    --color-cocoa: 90 62 43;
+    --color-ink: 28 27 26;
+    --color-muted: 107 107 107;
+    
+    /* Glass Effects */
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --glass-shadow: rgba(0, 0, 0, 0.06);
+    
+    /* Transitions */
+    --transition-fast: 150ms;
+    --transition-normal: 300ms;
+    --transition-slow: 500ms;
+    --transition-luxury: cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-parchment text-ink font-sans;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-ivory;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gold/40 rounded-full;
+    transition: background-color var(--transition-normal) var(--transition-luxury);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gold/60;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-gold/30 text-ink;
+  }
+
+  /* Focus outline */
+  :focus-visible {
+    @apply outline-none ring-2 ring-gold/50 ring-offset-2 ring-offset-parchment;
+  }
+
+  /* Typography reset */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-normal tracking-wide;
+    text-wrap: balance;
+  }
+
+  p {
+    @apply leading-relaxed;
+    text-wrap: pretty;
+  }
+
+  a {
+    @apply transition-colors duration-300;
+  }
+}
+
+@layer components {
+  /* Glass Panel */
+  .glass-panel {
+    @apply relative overflow-hidden;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.65) 100%
+    );
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .glass-panel::before {
+    content: '';
+    @apply absolute inset-0 opacity-30 pointer-events-none;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      transparent 50%
+    );
+  }
+
+  /* Gold gradient text */
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #C7A36D 0%, #E3B873 50%, #C7A36D 100%);
+  }
+
+  /* Grain texture overlay */
+  .grain-overlay {
+    @apply fixed inset-0 pointer-events-none z-[9999];
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    mix-blend-mode: multiply;
+  }
+
+  /* Ambient glow blobs */
+  .ambient-blob {
+    @apply absolute rounded-full blur-3xl opacity-40 pointer-events-none;
+    background: radial-gradient(circle, var(--blob-color) 0%, transparent 70%);
+    animation: float 10s ease-in-out infinite;
+  }
+
+  /* Magnetic hover effect container */
+  .magnetic-hover {
+    @apply transition-transform duration-300;
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  /* Cursor glow */
+  .cursor-glow {
+    @apply fixed w-[400px] h-[400px] pointer-events-none z-50;
+    background: radial-gradient(
+      circle,
+      rgba(199, 163, 109, 0.15) 0%,
+      transparent 70%
+    );
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease;
+  }
+
+  /* Elegant button */
+  .btn-elegant {
+    @apply relative inline-flex items-center justify-center px-8 py-4 text-sm font-display tracking-widest uppercase overflow-hidden;
+    @apply bg-cocoa text-parchment rounded-full;
+    @apply transition-all duration-500 ease-luxury;
+  }
+
+  .btn-elegant::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-gold opacity-0;
+    transition: opacity 0.5s ease;
+  }
+
+  .btn-elegant:hover::before {
+    @apply opacity-100;
+  }
+
+  .btn-elegant:hover {
+    @apply shadow-gold-lg;
+    transform: translateY(-2px);
+  }
+
+  .btn-elegant span {
+    @apply relative z-10;
+  }
+
+  /* Elegant button outline variant */
+  .btn-elegant-outline {
+    @apply relative inline-flex items-center justify-center px-8 py-4 text-sm font-display tracking-widest uppercase overflow-hidden;
+    @apply bg-transparent text-cocoa rounded-full;
+    @apply border border-cocoa/30;
+    @apply transition-all duration-500 ease-luxury;
+  }
+
+  .btn-elegant-outline:hover {
+    @apply border-gold bg-gold/10;
+  }
+
+  /* Divider with gold center */
+  .divider-gold {
+    @apply relative w-full h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent;
+  }
+
+  /* Image hover zoom */
+  .image-zoom {
+    @apply overflow-hidden;
+  }
+
+  .image-zoom img {
+    @apply transition-transform duration-700 ease-luxury;
+  }
+
+  .image-zoom:hover img {
+    @apply scale-105;
+  }
+
+  /* Fade in animation classes */
+  .animate-on-scroll {
+    @apply opacity-0 translate-y-8;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .animate-on-scroll.visible {
+    @apply opacity-100 translate-y-0;
+  }
+
+  /* Masonry grid */
+  .masonry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-auto-rows: 10px;
+  }
+
+  /* Price pill selector */
+  .price-pill {
+    @apply relative px-6 py-3 text-sm font-display rounded-full cursor-pointer;
+    @apply transition-all duration-400 ease-luxury;
+    @apply border border-cocoa/20 text-muted;
+  }
+
+  .price-pill.active {
+    @apply bg-cocoa text-parchment border-cocoa;
+    @apply shadow-soft;
+  }
+
+  .price-pill:not(.active):hover {
+    @apply border-gold/50 text-cocoa;
+  }
+
+  /* Accordion */
+  .accordion-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.5s ease-luxury;
+  }
+
+  .accordion-content.open {
+    grid-template-rows: 1fr;
+  }
+
+  .accordion-content > div {
+    overflow: hidden;
+  }
+}
+
+@layer utilities {
+  /* Spacing utilities */
+  .section-spacing {
+    @apply py-24 md:py-32 lg:py-40;
+  }
+
+  .section-spacing-sm {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  /* Container */
+  .container-luxury {
+    @apply max-w-7xl mx-auto px-6 md:px-8 lg:px-12;
+  }
+
+  .container-narrow {
+    @apply max-w-4xl mx-auto px-6 md:px-8;
+  }
+
+  /* Aspect ratios */
+  .aspect-editorial {
+    aspect-ratio: 4 / 5;
+  }
+
+  .aspect-product {
+    aspect-ratio: 3 / 4;
+  }
+
+  .aspect-hero {
+    aspect-ratio: 16 / 10;
+  }
+
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Delay utilities for staggered animations */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+  .delay-600 { animation-delay: 600ms; }
+  .delay-700 { animation-delay: 700ms; }
+  .delay-800 { animation-delay: 800ms; }
+
+  /* Hide scrollbar but keep functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
