@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { useState, useEffect, useRef } from 'react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { GlassPanel } from '@/components/ui/glass-panel'
@@ -9,10 +9,44 @@ import { Button } from '@/components/ui/button'
 
 export default function AdminLoginPage() {
   const router = useRouter()
+  const { status } = useSession()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const hasRedirected = useRef(false)
+
+  // Redirect to admin if already logged in
+  useEffect(() => {
+    if (status === 'authenticated' && !hasRedirected.current) {
+      hasRedirected.current = true
+      router.replace('/admin')
+    }
+  }, [status, router])
+
+  // Show loading while checking session
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cocoa via-cocoa/95 to-cocoa">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-gold/30 border-t-gold rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-parchment/70">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Don't render login form if already authenticated
+  if (status === 'authenticated') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cocoa via-cocoa/95 to-cocoa">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-gold/30 border-t-gold rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-parchment/70">Redirecting...</p>
+        </div>
+      </div>
+    )
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,8 +63,8 @@ export default function AdminLoginPage() {
       if (result?.error) {
         setError('Invalid email or password')
       } else {
-        router.push('/admin')
-        router.refresh()
+        // Hard redirect to ensure session is picked up
+        window.location.href = '/admin'
       }
     } catch (err) {
       setError('An error occurred. Please try again.')
