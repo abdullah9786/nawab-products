@@ -4,6 +4,7 @@ import { ProductsGrid, ProductsGridSkeleton, ProductsHeader, ProductsFilter } fr
 import dbConnect from '@/lib/db/connection'
 import { Product, Category } from '@/lib/db/models'
 import { serializeDoc } from '@/lib/utils'
+import type { Product as ProductType, Category as CategoryType } from '@/types'
 
 export const metadata: Metadata = {
   title: 'Our Collection | Premium Dry Fruits & Masalas',
@@ -20,15 +21,15 @@ interface ProductsPageProps {
   searchParams: { category?: string; sort?: string }
 }
 
-async function getCategories() {
+async function getCategories(): Promise<CategoryType[]> {
   await dbConnect()
   const categories = await Category.find({ isActive: true })
     .sort({ displayOrder: 1, name: 1 })
     .lean()
-  return serializeDoc(categories)
+  return serializeDoc(categories) as unknown as CategoryType[]
 }
 
-async function getProducts(categorySlug?: string, sort?: string) {
+async function getProducts(categorySlug?: string, sort?: string): Promise<ProductType[]> {
   await dbConnect()
   
   // Build query
@@ -53,7 +54,7 @@ async function getProducts(categorySlug?: string, sort?: string) {
   }
   
   const products = await Product.find(query).sort(sortQuery).lean()
-  return serializeDoc(products)
+  return serializeDoc(products) as unknown as ProductType[]
 }
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {

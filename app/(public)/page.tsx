@@ -12,6 +12,7 @@ import { Navigation, Footer, CursorGlow } from '@/components/ui'
 import dbConnect from '@/lib/db/connection'
 import { Product, Category } from '@/lib/db/models'
 import { serializeDoc } from '@/lib/utils'
+import type { Product as ProductType, Category as CategoryType } from '@/types'
 
 export const metadata: Metadata = {
   title: 'NAWAB KHANA | Luxury Dry Fruits & Masalas',
@@ -25,22 +26,22 @@ export const metadata: Metadata = {
   },
 }
 
-async function getFeaturedProducts() {
+async function getFeaturedProducts(): Promise<ProductType[]> {
   await dbConnect()
   const products = await Product.find({ isActive: true })
     .sort({ featured: -1, createdAt: -1 })
     .limit(6)
     .lean()
-  return serializeDoc(products)
+  return serializeDoc(products) as unknown as ProductType[]
 }
 
-async function getCategories() {
+async function getCategories(): Promise<CategoryType[]> {
   await dbConnect()
   const categories = await Category.find({ isActive: true })
     .sort({ displayOrder: 1, createdAt: -1 })
     .limit(4) // Limit to 4 categories for the collections grid
     .lean()
-  return serializeDoc(categories)
+  return serializeDoc(categories) as unknown as CategoryType[]
 }
 
 export default async function HomePage() {

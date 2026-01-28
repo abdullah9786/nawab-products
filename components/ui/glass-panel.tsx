@@ -37,16 +37,8 @@ export function GlassPanel({
   animate = true,
   ...props
 }: GlassPanelProps) {
-  const Component = animate ? motion.div : 'div'
-  
-  const animationProps = animate ? {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] },
-  } : {}
-
   return (
-    <Component
+    <motion.div
       className={cn(
         'relative overflow-hidden rounded-3xl',
         blurMap[blur],
@@ -55,7 +47,9 @@ export function GlassPanel({
         glow && 'shadow-glass',
         className
       )}
-      {...animationProps}
+      initial={animate ? { opacity: 0, y: 20 } : false}
+      animate={animate ? { opacity: 1, y: 0 } : false}
+      transition={animate ? { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] } : undefined}
       {...props}
     >
       {/* Gradient overlay for depth */}
@@ -81,7 +75,7 @@ export function GlassPanel({
       <div className="relative z-10">
         {children}
       </div>
-    </Component>
+    </motion.div>
   )
 }
 

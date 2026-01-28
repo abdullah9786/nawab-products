@@ -79,7 +79,7 @@ export function MagneticCard({
         style={{
           boxShadow: useTransform(
             [shadowX, shadowY],
-            ([latestX, latestY]) =>
+            ([latestX, latestY]: number[]) =>
               `${-latestX}px ${-latestY + 8}px 32px rgba(0, 0, 0, 0.06)`
           ),
         }}

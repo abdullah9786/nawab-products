@@ -18,7 +18,7 @@ import type { Product } from '@/types'
 async function getProduct(slug: string): Promise<Product | null> {
   await dbConnect()
   const product = await ProductModel.findOne({ slug, isActive: true }).lean()
-  return product ? serializeDoc(product) : null
+  return product ? (serializeDoc(product) as unknown as Product) : null
 }
 
 async function getRelatedProducts(category: string, excludeSlug: string): Promise<Product[]> {
@@ -28,7 +28,7 @@ async function getRelatedProducts(category: string, excludeSlug: string): Promis
     slug: { $ne: excludeSlug },
     isActive: true 
   }).limit(4).lean()
-  return serializeDoc(products)
+  return serializeDoc(products) as unknown as Product[]
 }
 
 interface ProductPageProps {
