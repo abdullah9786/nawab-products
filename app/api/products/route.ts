@@ -15,9 +15,14 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get('featured')
     const limit = searchParams.get('limit')
     const page = searchParams.get('page') || '1'
+    const includeInactive = searchParams.get('includeInactive')
 
-    // Build query
-    const query: Record<string, unknown> = { isActive: true }
+    // Build query - include inactive products if requested (for admin)
+    const query: Record<string, unknown> = {}
+    
+    if (includeInactive !== 'true') {
+      query.isActive = true
+    }
     
     if (category) {
       query.category = category

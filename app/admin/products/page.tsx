@@ -16,7 +16,8 @@ export default function AdminProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('/api/products?limit=100')
+      // Include inactive products for admin view
+      const res = await fetch('/api/products?limit=100&includeInactive=true')
       const data = await res.json()
       if (data.success) {
         setProducts(data.data || [])
